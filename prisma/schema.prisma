@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Clients {
+  id        Int        @id() @default(autoincrement())
+  nome      String
+  email     String     @unique
+  nif       String     @unique
+  senha     String
+  saldo     String     @default("20000")
+  Reservas  Reservas[]
+  create_at DateTime   @default(now())
+
+  @@map("clients")
+}
+
+model Providers {
+  id               Int                @id() @default(autoincrement())
+  nome             String
+  email            String             @unique
+  nif              String             @unique
+  senha            String
+  ServicesProvider ServicesProvider[]
+  create_at        DateTime           @default(now())
+  Reservas         Reservas[]
+
+  @@map("providers")
+}
+
+model ServicesProvider {
+  id        Int    @id() @default(autoincrement())
+  nome      String
+  descricao String
+  preco     String
+
+  providersId Int
+  provider    Providers  @relation(fields: [providersId], references: [id])
+  Reservas    Reservas[]
+  create_at   DateTime   @default(now())
+}
+
+model Reservas {
+  id Int @id() @default(autoincrement())
+
+  client          Clients          @relation(fields: [clientsId], references: [id])
+  serviceProvider ServicesProvider @relation(fields: [servicesProviderId], references: [id])
+  status          Boolean          @default(false)
+  create_at       DateTime         @default(now())
+
+  clientsId Int
+
+  provider Providers @relation(fields: [providersId], references: [id])
+
+  servicesProviderId Int
+  Stories            Historys[]
+  providersId        Int
+}
+
+model Historys {
+  id      Int      @id() @default(autoincrement())
+  reserva Reservas @relation(fields: [reservasId], references: [id])
+
+  reservasId Int
+}

@@ -1,0 +1,17 @@
+services:
+  bullir-app:
+    image: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+    environment:
+      - NODE_ENV=production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  sqlite:
+    image: nouchka/sqlite3  
+    tty: true  
+    stdin_open: true  
